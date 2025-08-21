@@ -4,6 +4,22 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    thumbnail_max_size: '%env(int:THUMBNAIL_MAX_SIZE)%'
+    thumbnail_format: '%env(THUMBNAIL_FORMAT)%'
+
+    storage.local.root: '%kernel.project_dir%/var/storage'
+
+    aws.region: '%env(AWS_REGION)%'
+    aws.bucket: '%env(AWS_BUCKET)%'
+
+    ftp.host: '%env(FTP_HOST)%'
+    ftp.username: '%env(FTP_USER)%'
+    ftp.password: '%env(FTP_PASS)%'
+    ftp.root: '%env(default::FTP_ROOT)%'
+    ftp.port: '%env(int:FTP_PORT)%'
+    ftp.ssl: '%env(bool:FTP_SSL)%'
+    ftp.passive: '%env(bool:FTP_PASSIVE)%'
+    ftp.timeout: '%env(int:FTP_TIMEOUT)%'
 
 services:
     # default configuration for services in *this* file
@@ -13,8 +29,47 @@ services:
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/'
-
+    SzymonLukaszczykRekrutacjaSmartiveapp\:
+        resource: '../src/*'
+        exclude:
+            - '../src/**/Domain/Model'
+            - '../src/**/Domain/Service'
+            - '../src/tests'
+            - '../src/Kernel.php'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    SzymonLukaszczykRekrutacjaSmartiveapp\Media\Image\Infrastructure\Service\ThumbnailGenerator: ~
+
+    SzymonLukaszczykRekrutacjaSmartiveapp\Media\Storage\Domain\Service\StorageFactoryInterface:
+        alias: SzymonLukaszczykRekrutacjaSmartiveapp\Media\Storage\Infrastructure\Factory\StorageFactory
+
+    SzymonLukaszczykRekrutacjaSmartiveapp\Media\Image\Application\Handler\GenerateThumbnailHandler:
+        arguments:
+            $generator: '@SzymonLukaszczykRekrutacjaSmartiveapp\Media\Image\Infrastructure\Service\ThumbnailGenerator'
+            $maxSize: '%thumbnail_max_size%'
+            $format: '%thumbnail_format%'
+        tags: [ 'messenger.message_handler' ]
+
+    SzymonLukaszczykRekrutacjaSmartiveapp\Media\Storage\Infrastructure\Factory\StorageFactory:
+        arguments:
+            $storages: !tagged_iterator storage.adapter
+
+    SzymonLukaszczykRekrutacjaSmartiveapp\Media\Storage\Infrastructure\Adapter\LocalStorage:
+        tags: ['storage.adapter']
+        arguments:
+            $root: '%storage.local.root%'
+
+    SzymonLukaszczykRekrutacjaSmartiveapp\Media\Storage\Infrastructure\Adapter\FtpStorage:
+        arguments:
+            $host: '%ftp.host%'
+            $username: '%ftp.username%'
+            $password: '%ftp.password%'
+            $root: '%ftp.root%'
+            $port: '%ftp.port%'
+            $ssl: '%ftp.ssl%'
+            $passive: '%ftp.passive%'
+            $timeout: '%ftp.timeout%'
+        tags: ['storage.adapter']
+
+    Intervention\Image\ImageManager:
+        arguments: ['gd']

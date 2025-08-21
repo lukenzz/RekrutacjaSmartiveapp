@@ -1,0 +1,16 @@
+framework:
+    messenger:
+        transports:
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                retry_strategy:
+                    max_retries: 5
+                    delay: 1000
+                    multiplier: 2
+                    max_delay: 10000
+
+            failed:
+                dsn: 'doctrine://default?auto_setup=1'
+
+        routing:
+            'SzymonLukaszczykRekrutacjaSmartiveapp\Media\Image\Application\Command\GenerateThumbnailCommand': async
