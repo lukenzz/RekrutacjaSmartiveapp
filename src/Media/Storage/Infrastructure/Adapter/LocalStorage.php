@@ -23,6 +23,14 @@ class LocalStorage implements StorageInterface
     public function store(string $sourcePath, string $destinationPath): void
     {
         try {
+            $dir = dirname($destinationPath);
+
+            if (!is_dir($dir)) {
+                if (!mkdir($dir, 0777, true) && !is_dir($dir)) {
+                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
+                }
+            }
+
             $stream = @fopen($sourcePath, 'r');
             if (false === $stream) {
                 throw new StorageException(StorageTypeEnum::LOCAL->value.': Unable to open source file: '.$sourcePath);

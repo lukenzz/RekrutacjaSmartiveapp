@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Media\Storage\Infrastructure\Adapter;
+namespace SzymonLukaszczykRekrutacjaSmartiveapp\Tests\Media\Storage\Infrastructure\Adapter;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use SzymonLukaszczykRekrutacjaSmartiveapp\Media\Storage\Domain\Enum\StorageTypeEnum;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Media\Storage\Infrastructure\Adapter;
+namespace SzymonLukaszczykRekrutacjaSmartiveapp\Tests\Media\Storage\Infrastructure\Adapter;
 
 use League\Flysystem\Filesystem;
 use PHPUnit\Framework\TestCase;
@@ -54,6 +54,7 @@ class FtpStorageTest extends TestCase
                 'test.txt',
                 $this->callback(function ($arg) {
                     $this->assertIsResource($arg);
+
                     return true;
                 })
             );
