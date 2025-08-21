@@ -9,7 +9,9 @@
         "ext-gd": "*",
         "ext-iconv": "*",
         "doctrine/dbal": "^4.3",
-        "intervention/image": "^3.11",
+        "doctrine/doctrine-bundle": "^2.15",
+        "doctrine/doctrine-migrations-bundle": "^3.4",
+        "doctrine/orm": "^3.5",
         "league/flysystem": "^3.30",
         "league/flysystem-ftp": "^3.29",
         "symfony/console": "7.3.*",
@@ -20,6 +22,7 @@
         "symfony/messenger": "7.3.*",
         "symfony/monolog-bundle": "^3.10",
         "symfony/runtime": "7.3.*",
+        "symfony/translation": "^7.3",
         "symfony/yaml": "7.3.*"
     },
     "config": {

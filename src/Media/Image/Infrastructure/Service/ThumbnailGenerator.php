@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SzymonLukaszczykRekrutacjaSmartiveapp\Media\Image\Infrastructure\Service;
 
+use SzymonLukaszczykRekrutacjaSmartiveapp\Media\Image\Domain\Exception\ThumbnailGeneratorException;
 use SzymonLukaszczykRekrutacjaSmartiveapp\Media\Image\Domain\Model\ThumbnailModel;
 use SzymonLukaszczykRekrutacjaSmartiveapp\Media\Image\Domain\Service\ThumbnailGeneratorInterface;
 use SzymonLukaszczykRekrutacjaSmartiveapp\Media\Storage\Domain\Service\StorageFactoryInterface;
@@ -18,29 +19,22 @@ final class ThumbnailGenerator implements ThumbnailGeneratorInterface
     public function generate(ThumbnailModel $model): void
     {
         if (!file_exists($model->sourcePath)) {
-            throw new \RuntimeException("Source file does not exist: {$model->sourcePath}");
+            throw ThumbnailGeneratorException::sourceFileNotFound($model->sourcePath);
         }
 
         $info = getimagesize($model->sourcePath);
         if (false === $info) {
-            throw new \RuntimeException("Unable to get image info: {$model->sourcePath}");
+            throw ThumbnailGeneratorException::unableToGetImageInfo($model->sourcePath);
         }
 
         [$width, $height, $type] = $info;
 
-        switch ($type) {
-            case IMAGETYPE_JPEG:
-                $src = imagecreatefromjpeg($model->sourcePath);
-                break;
-            case IMAGETYPE_PNG:
-                $src = imagecreatefrompng($model->sourcePath);
-                break;
-            case IMAGETYPE_GIF:
-                $src = imagecreatefromgif($model->sourcePath);
-                break;
-            default:
-                throw new \RuntimeException("Unsupported image type: {$model->sourcePath}");
-        }
+        $src = match ($type) {
+            IMAGETYPE_JPEG => imagecreatefromjpeg($model->sourcePath),
+            IMAGETYPE_PNG => imagecreatefrompng($model->sourcePath),
+            IMAGETYPE_GIF => imagecreatefromgif($model->sourcePath),
+            default => throw ThumbnailGeneratorException::unsupportedImageType($model->sourcePath),
+        };
 
         if ($width > $height) {
             $newWidth = $model->maxSize;
@@ -75,14 +69,14 @@ final class ThumbnailGenerator implements ThumbnailGeneratorInterface
             default:
                 imagedestroy($thumb);
                 imagedestroy($src);
-                throw new \RuntimeException("Unsupported output format: {$model->format}");
+                throw ThumbnailGeneratorException::unsupportedOutputFormat($model->format);
         }
 
         imagedestroy($thumb);
         imagedestroy($src);
 
         $storage = $this->storageFactory->create($model->storage);
-        $storage->store($tmpFile, basename($model->sourcePath).'.'.$model->format);
+        $storage->store($tmpFile, basename($model->sourcePath));
 
         unlink($tmpFile);
     }

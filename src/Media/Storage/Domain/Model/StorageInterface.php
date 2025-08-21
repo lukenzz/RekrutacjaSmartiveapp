@@ -9,5 +9,6 @@ use SzymonLukaszczykRekrutacjaSmartiveapp\Media\Storage\Domain\Enum\StorageTypeE
 interface StorageInterface
 {
     public function store(string $sourcePath, string $destinationPath): void;
+
     public function supports(StorageTypeEnum $type): bool;
 }

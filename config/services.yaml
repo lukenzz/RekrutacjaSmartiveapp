@@ -7,7 +7,7 @@ parameters:
     thumbnail_max_size: '%env(int:THUMBNAIL_MAX_SIZE)%'
     thumbnail_format: '%env(THUMBNAIL_FORMAT)%'
 
-    storage.local.root: '%kernel.project_dir%/var/storage'
+    storage.local.root: '%env(STORAGE_LOCAL_ROOT)%'
 
     aws.region: '%env(AWS_REGION)%'
     aws.bucket: '%env(AWS_BUCKET)%'
@@ -70,6 +70,3 @@ services:
             $passive: '%ftp.passive%'
             $timeout: '%ftp.timeout%'
         tags: ['storage.adapter']
-
-    Intervention\Image\ImageManager:
-        arguments: ['gd']

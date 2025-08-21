@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Media\Storage\Infrastructure\Factory;
+namespace SzymonLukaszczykRekrutacjaSmartiveapp\Tests\Media\Storage\Infrastructure\Factory;
 
 use PHPUnit\Framework\TestCase;
 use SzymonLukaszczykRekrutacjaSmartiveapp\Media\Storage\Domain\Enum\StorageTypeEnum;

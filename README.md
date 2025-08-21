@@ -35,15 +35,20 @@ Install composer
 composer install
 ```
 
+Install messenger transport
+```bash
+php bin/console messenger:setup-transports
+```
+
 ## Command
 For running command use:
 - first option (interact questions)
 ```bash
-docker compose exec php-fpm php bin/console smartiveapp:generate_thumbnails
+php bin/console smartiveapp:generate_thumbnails
 ```
 - second option (command with parameters)
 ```bash
-docker compose exec php-fpm php bin/console smartiveapp:generate_thumbnails public/img/exaple.jpg -s local
+php bin/console smartiveapp:generate_thumbnails public/img/exaple.jpg -slocal
 ```
 first argument represent `path to file`
 
@@ -56,14 +61,14 @@ The project includes the following dev tools:
 
 - **PHPStan** – static analysis for detecting potential errors:
 ```bash
-docker compose exec php-fpm vendor/bin/phpstan analyse src
+vendor/bin/phpstan analyse src
 ```
 - **PHP CS Fixer – automatic code formatting according to PSR standards:**
 ```bash
-docker compose exec php-fpm vendor/bin/php-cs-fixer fix
+vendor/bin/php-cs-fixer fix
 ```
 ## Testing
 Unit tests are located in src/tests and can be run with PHPUnit:
 ```bash
-docker compose exec php-fpm vendor/bin/phpunit
+vendor/bin/phpunit
 ```

@@ -96,14 +96,16 @@ class GenerateThumbnailsCliCommand extends Command
             $command = new GenerateThumbnailCommand($source, StorageTypeEnum::from($storage));
             $this->commandBus->dispatch($command);
             $io->success('Thumbnail generation dispatched');
+
             return Command::SUCCESS;
         } catch (\Exception|ExceptionInterface $e) {
             $io->error($e->getMessage());
+
             return Command::FAILURE;
         }
     }
 
-    private function validateSource(string $source): bool
+    private function validateSource(?string $source): bool
     {
         return empty($source) || !is_file($source) || !file_exists($source);
     }
